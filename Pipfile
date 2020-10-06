@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.doubanio.com/simple"
+verify_ssl = true
+
+[dev-packages]
+ipython = "*"
+pyls = "*"
+python-language-server = {extras = ["all"], version = "*"}
+
+[packages]
+pypandoc = "*"
+requests = "*"
+pymongo = "*"
+dateparser = "*"
+celery = "*"
+redis = "*"
+
+[requires]
+python_version = "3.8"
