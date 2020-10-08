@@ -7,8 +7,10 @@ import time
 
 import pymongo
 import requests
+from tqdm import tqdm
 
 from leetcode import requester as fetcher
+from leetcode import tasks
 
 logger = logging.getLogger(__name__)
 
@@ -19,105 +21,92 @@ def init_client():
     return client
 
 
-def update_or_insert_favorites(collection, favorites):
-    for favorite in favorites:
-        q = {"name": favorite["name"]}
-        exist_one = collection.find_one(q)
-        favorite.update({"update_time": datetime.datetime.now()})
-        if exist_one:
-            collection.update_one(q, {"$set": favorite})
-            continue
-        collection.insert_one(favorite)
-
-
-def get_favorites(session: requests.Session, client: pymongo.MongoClient):
+def update_favorites_all():
     # Leetcode.com
-    logger.debug("Fetching leetcode    problem favorites")
-    favorites = fetcher.get_problem_favorites_all(session)
-    collection = client.leetcode.favorites
-    update_or_insert_favorites(favorites=favorites, collection=collection)
+    logger.debug("Starting leetcode update_favorites_all_task")
+    flow = (
+        tasks.get_problem_favorites_all_task.s()
+        | tasks.mongo_update_favorites_all_task.s(cn=False)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
 
     # Leetcode-cn.com
-    logger.debug("Fetching leetcode-cn problem favorites")
-    favorites_cn = fetcher.get_cn_problem_favorites_all(session)
-    collection_cn = client.leetcode_cn.favorites
-    update_or_insert_favorites(favorites=favorites_cn, collection=collection_cn)
+    logger.debug("Starting leetcode-cn update_favorites_all_task")
+    flow = (
+        tasks.get_cn_problem_favorites_all_task.s()
+        | tasks.mongo_update_favorites_all_task.s(cn=True)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
 
 
-def update_or_insert_tags(collection, tags):
-    for tag in tags["topics"]:
-        q = {"slug": tag["slug"]}
-        tag.update({"update_time": datetime.datetime.now()})
-        exist_one = collection.find_one(q)
-        if exist_one:
-            collection.update_one(q, {"$set": tag})
-            continue
-        collection.insert_one(tag)
-
-
-def get_tags(session: requests.Session, client: pymongo.MongoClient):
+def update_tags_all():
     # Leetcode.com
-    logger.debug("Fetching leetcode problem    topic tags")
-    tags = fetcher.get_problem_tags_all(session)
-    collection = client.leetcode.topic_tags
-    update_or_insert_tags(tags=tags, collection=collection)
+    logger.debug("Starting leetcode update_tags_all_task")
+    flow = (
+        tasks.get_problem_tags_all_task.s()
+        | tasks.mongo_update_tags_all_task.s(cn=False)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
 
     # Leetcode-cn.com
-    logger.debug("Fetching leetcode-cn problem topic tags")
-    tags_cn = fetcher.get_cn_problem_tags_all(session)
-    collection_cn = client.leetcode_cn.topic_tags
-    update_or_insert_tags(tags=tags_cn, collection=collection_cn)
+    logger.debug("Starting leetcode-cn update_tags_all_task")
+    flow = (
+        tasks.get_cn_problem_tags_all_task.s()
+        | tasks.mongo_update_tags_all_task.s(cn=True)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
 
 
-def update_or_insert_problem_stats(stats_collection, history_collection, stats):
-    for stat_item in stats["stat_status_pairs"]:
-        stat = stat_item["stat"]
-        q = {"question_id": stat["question_id"]}
-        update_time = datetime.datetime.now()
-        stat_data = {
-            "update_time": update_time,
-            "status": stat_item["status"],
-            "difficulty_level": stat_item["difficulty"]["level"],
-            "paid_only": stat_item["paid_only"],
-            "is_favor": stat_item["is_favor"],
-            "frequency": stat_item["frequency"],
-            "progress": stat_item["progress"],
-            "ac_rate": stat["total_acs"] / stat["total_submitted"],
-            **stat,
-        }
-        history_collection.insert_one(stat_data)
-        exist_one = stats_collection.find_one(q)
-        if exist_one:
-            if "_id" in stat_data:
-                del stat_data["_id"]
-            stats_collection.update_one(q, {"$set": stat_data})
-            continue
-
-        stat_data.update(create_time=datetime.datetime.now())
-        stats_collection.insert_one(stat_data)
-
-
-def get_problem_stats(session: requests.Session, client: pymongo.MongoClient):
+def update_problem_stats_all():
     # Leetcode.com
-    logger.debug("Fetching leetcode    problem stats all.")
-    stats_collection = client.leetcode.problem_stats
-    history_collection = client.leetcode.problem_stats_history
-    stats = fetcher.get_problem_stats_all(session)
-    update_or_insert_problem_stats(
-        stats=stats,
-        stats_collection=stats_collection,
-        history_collection=history_collection,
-    )
+    logger.debug("Starting leetcode update_problem_stats_all_task")
+    flow = (
+        tasks.get_problem_stats_all_task.s()
+        | tasks.mongo_update_problem_stats_all_task.s(cn=False)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
+
     # Leetcode-cn.com
-    logger.debug("Fetching leetcode-cn problem stats all.")
-    stats_collection_cn = client.leetcode_cn.problem_stats
-    history_collection_cn = client.leetcode_cn.problem_stats_history
-    stats_cn = fetcher.get_cn_problem_stats_all(session)
-    update_or_insert_problem_stats(
-        stats=stats_cn,
-        stats_collection=stats_collection_cn,
-        history_collection=history_collection_cn,
-    )
+    logger.debug("Starting leetcode-cn update_problem_stats_all_task")
+    flow_cn = (
+        tasks.get_cn_problem_stats_all_task.s()
+        | tasks.mongo_update_problem_stats_all_task.s(cn=True)
+    )()
+    flow_cn.get()
+    for result in tqdm(flow_cn.children, total=len(flow_cn.children)):
+        result.get()
+
+
+def update_problems_all():
+    # Leetcode.com
+    logger.debug("Starting leetcode update_problem_all_task")
+    flow = (
+        tasks.get_problem_stats_all_task.s()
+        | tasks.mongo_update_problems_all_task.s(cn=False)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
+
+    # Leetcode-cn.com
+    logger.debug("Starting leetcode-cn update_problem_all_task")
+    flow = (
+        tasks.get_problem_stats_all_task.s()
+        | tasks.mongo_update_problems_all_task.s(cn=False)
+    )()
+    flow.get()
+    for result in tqdm(flow.children, total=len(flow.children)):
+        result.get()
 
 
 def update_or_create_problems(db, session, f):
@@ -151,11 +140,11 @@ def update_or_create_problems(db, session, f):
 
 def get_problems(session: requests.Session, client: pymongo.MongoClient):
     # Leetcode.com
-    logger.debug("Fetching leetcode    problems all.")
-    db = client.leetcode
-    update_or_create_problems(
-        db=db, session=session, f=fetcher.get_problem_by_title_slug
-    )
+    # logger.debug("Fetching leetcode    problems all.")
+    # db = client.leetcode
+    # update_or_create_problems(
+    #     db=db, session=session, f=fetcher.get_problem_by_title_slug
+    # )
     # Leetcode-cn.com
     logger.debug("Fetching leetcode-cn problems all.")
     db_cn = client.leetcode_cn

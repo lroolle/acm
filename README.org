@@ -1,0 +1,150 @@
+#+TITLE: ACM(AC Manager)
+#+DATE: 2020-09-08 14:37
+
+#+EXPORT_FILE_NAME: readme
+#+HUGO_WEIGHT: auto
+#+HUGO_BASE_DIR: ~/G/blog
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_SECTION: notes
+#+HUGO_CATEGORIES: notes
+#+HUGO_TAGS: notes
+
+* ACM: AC Manager
+1. Leetcode Manager
+2. Questions Manage
+3. Solution Manger
+4. Leecode 中文社区
+
+* Leetcode
+** DONE The Path Tree
+CLOSED: [2020-09-08 Tue 19:29]
+:LOGBOOK:
+- State "DONE"       from "STRT"       [2020-09-08 Tue 19:29]
+- State "STRT"       from "TODO"       [2020-09-08 Tue 14:59]
+- State "TODO"       from              [2020-09-08 Tue 14:59]
+:END:
+
+Leetcode files:
+
+#+BEGIN_EXAMPLE
+- leetcode
+    - 0001_question-slug1
+        - README
+        - solution
+        - article
+    - 0002_question-slug2
+#+END_EXAMPLE
+
+For Example:
+#+BEGIN_EXAMPLE
+/path/to/your/leetcode(basedir)
+│  
+├── 0003_longest-substring-without-repeating-characters
+│   ├── README.org
+│   ├── article
+│   └── solution
+├── 0006_zigzag-conversion
+│   ├── README.org
+│   ├── article
+│   └── solution
+...
+#+END_EXAMPLE
+
+** TODO Leecode & Leetcode-cn
+:LOGBOOK:
+CLOCK: [2020-09-08 Tue 20:12]--[2020-09-08 Tue 20:37] =>  0:25
+:END:
+*** TODO Periodic Updates
+:LOGBOOK:
+- State "TODO"       from              [2020-09-08 Tue 14:43]
+:END:
+*** DONE Submit
+CLOSED: [2020-09-11 Fri 22:28]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-11 Fri 22:28]
+- State "TODO"       from              [2020-09-11 Fri 22:28]
+:END:
+*** TODO Submissions Detail
+:LOGBOOK:
+- State "TODO"       from              [2020-09-11 Fri 22:28]
+:END:
+*** TODO Integrate to Emacs
+:LOGBOOK:
+- Note taken on [2020-09-12 Sat 12:37] \\
+  - [[https://github.com/kaiwk/leetcode.el/blob/master/leetcode.el][leetcode.el/leetcode.el at master · kaiwk/leetcode.el · GitHub]]
+- State "TODO"       from              [2020-09-08 Tue 14:42]
+:END:
+*** DONE readme and readme-cn?? solution explanation? => solution/README.org
+CLOSED: [2020-09-08 Tue 19:36]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-08 Tue 19:36]
+- State "TODO"       from              [2020-09-08 Tue 19:30]
+:END:
+*** DONE Doc
+CLOSED: [2020-09-08 Tue 19:37]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-08 Tue 19:37]
+- State "TODO"       from              [2020-09-08 Tue 14:40]
+:END:
+*** KILL Local User?
+CLOSED: [2020-10-02 Fri 16:53]
+:LOGBOOK:
+- State "KILL"       from "HOLD"       [2020-10-02 Fri 16:53]
+- State "HOLD"       from "WAIT"       [2020-09-08 Tue 19:37] \\
+  What's the piont?
+- State "WAIT"       from "TODO"       [2020-09-08 Tue 14:44]
+- State "TODO"       from              [2020-09-08 Tue 14:44]
+:END:
+*** DONE Login
+CLOSED: [2020-09-09 Wed 11:47]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-09 Wed 11:47]
+CLOCK: [2020-09-08 Tue 19:38]--[2020-09-08 Tue 20:03] =>  0:25
+- State "TODO"       from              [2020-09-08 Tue 14:39]
+:END:
+*** DONE Problems  All
+CLOSED: [2020-09-09 Wed 16:55]
+:LOGBOOK:
+- State "DONE"       from "STRT"       [2020-09-09 Wed 16:55]
+- State "STRT"       from "TODO"       [2020-09-09 Wed 16:54]
+- State "TODO"       from              [2020-09-08 Tue 14:40]
+:END:
+*** DONE Tags All
+CLOSED: [2020-09-09 Wed 18:17]
+:LOGBOOK:
+- State "DONE"       from "STRT"       [2020-09-09 Wed 18:17]
+- State "STRT"       from              [2020-09-09 Wed 16:54]
+:END:
+*** DONE Get Solution
+CLOSED: [2020-09-09 Wed 19:03]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-09 Wed 19:03]
+- State "TODO"       from              [2020-09-09 Wed 13:55]
+:END:
+*** DONE Doc Solutions.
+CLOSED: [2020-10-02 Fri 16:53]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-10-02 Fri 16:53]
+- State "TODO"       from              [2020-09-09 Wed 19:03]
+:END:
+*** DONE Database
+CLOSED: [2020-09-09 Wed 19:08]
+:LOGBOOK:
+- State "DONE"       from "STRT"       [2020-09-09 Wed 19:08]
+- State "STRT"       from "TODO"       [2020-09-09 Wed 16:54]
+- State "TODO"       from              [2020-09-08 Tue 20:12]
+:END:
+*** TODO Auto Submit
+:LOGBOOK:
+- State "TODO"       from              [2020-09-09 Wed 19:09]
+:END:
+*** DONE Leetcode 每日一题（graphql/questionOfToday）
+CLOSED: [2020-09-11 Fri 22:27]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2020-09-11 Fri 22:27]
+- State "TODO"       from              [2020-09-09 Wed 19:10]
+:END:
+* TODO An Other OJ
+:LOGBOOK:
+- State "TODO"       from              [2020-09-08 Tue 14:44]
+:END:

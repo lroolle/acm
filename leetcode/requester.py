@@ -7,11 +7,12 @@ import pickle
 from functools import wraps
 from typing import List
 
+import browser_cookie3
 import requests
+from requests.exceptions import RequestException
 from requests.packages import urllib3
 
 from leetcode import config
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +27,15 @@ GRAPHQL = f"https://{DOMAIN}/graphql"
 GRAPHQL_CN = f"https://{DOMAIN_CN}/graphql"
 
 
-class BadRequest(requests.exceptions.RequestException):
+class RequestException(RequestException, urllib3.exceptions.HTTPError):
+    """ A request exception"""
+
+
+class BadRequest(RequestException):
     """ Unexpected response due to a BAD request Eww..."""
 
 
-class NotAuthenticated(requests.exceptions.RequestException):
+class NotAuthenticated(RequestException):
     """ Authetication required to request."""
 
 
@@ -45,7 +50,7 @@ def login_required(domain):
                 )
             )
             if not session:
-                raise TypeError("Session not found")
+                raise NotAuthenticated("Session not found")
 
             logged_in = session[0].cookies.get("LEETCODE_SESSION", domain=domain)
             if not bool(logged_in):
@@ -62,7 +67,7 @@ def login_required(domain):
 def get_cookies_csrftoken(session: requests.Session, domain: str) -> str:
     """
     The token in leetcode.com domain named: <csrftoken for leetcode.com>
-    The token in leetcode-cn.com domain named: <csrftoken for .leetcode.com token>
+    The token in leetcode-cn.com domain named: <csrftoken for .leetcode-cn.com token>
     """
     csrftokens = filter(
         lambda x: x.name == "csrftoken" and x.domain.endswith(domain), session.cookies,
@@ -107,7 +112,7 @@ def get_cn_problem_by_title_slug(session: requests.Session, title_slug: str) -> 
     """
     payload = {
         "operationName": "questionData",
-        "variables": {"titleSlug": "sum-of-distances-in-tree"},
+        "variables": {"titleSlug": title_slug},
         "query": "query questionData($titleSlug: String!) {\n  question(titleSlug: $titleSlug) {\n    questionId\n    questionFrontendId\n    boundTopicId\n    title\n    titleSlug\n    content\n    translatedTitle\n    translatedContent\n    isPaidOnly\n    difficulty\n    likes\n    dislikes\n    isLiked\n    similarQuestions\n    contributors {\n      username\n      profileUrl\n      avatarUrl\n      __typename\n    }\n    langToValidPlayground\n    topicTags {\n      name\n      slug\n      translatedName\n      __typename\n    }\n    companyTagStats\n    codeSnippets {\n      lang\n      langSlug\n      code\n      __typename\n    }\n    stats\n    hints\n    solution {\n      id\n      canSeeDetail\n      __typename\n    }\n    status\n    sampleTestCase\n    metaData\n    judgerAvailable\n    judgeType\n    mysqlSchemas\n    enableRunCode\n    envInfo\n    book {\n      id\n      bookName\n      pressName\n      source\n      shortDescription\n      fullDescription\n      bookImgUrl\n      pressImgUrl\n      productUrl\n      __typename\n    }\n    isSubscribed\n    isDailyQuestion\n    dailyRecordStatus\n    editorType\n    ugcQuestionId\n    style\n    __typename\n  }\n}\n",
     }
     headers = {
@@ -120,7 +125,7 @@ def get_cn_problem_by_title_slug(session: requests.Session, title_slug: str) -> 
     resp = session.post(GRAPHQL_CN, data=json.dumps(payload), headers=headers)
     resp_json = resp.json()
     if resp_json.get("errors", ""):
-        raise Exception(
+        raise BadRequest(
             "Error get cn problem by title slug: %s" % str(resp_json["errors"])
         )
 
@@ -489,28 +494,36 @@ def cookiejar_from_cookiestxt(filename: str) -> requests.cookies.RequestsCookieJ
 class RequestsCookieJar(
     requests.cookies.RequestsCookieJar, http.cookiejar.MozillaCookieJar
 ):
-    """ A cookiejar implemented from RequestsCookieJar & MozillaCookieJar
-        Add feature to support load/save cookies from/to `cookies.txt`
+    r"""
+    A cookiejar implemented from RequestsCookieJar & MozillaCookieJar
+    Supporting features to load/save cookies from/to `cookies.txt`
     """
 
-    def load(self, filename=None, ignore_discard=True, ignore_expires=True):
+    def load(
+        self, domain="", filename=None, ignore_discard=False, ignore_expires=False
+    ):
         super(RequestsCookieJar, self).load(filename, ignore_discard, ignore_expires)
 
-    def save(self, filename=None, ignore_discard=True, ignore_expires=True):
+    def save(self, filename=None, ignore_discard=False, ignore_expires=False):
         super(RequestsCookieJar, self).save(filename, ignore_discard, ignore_expires)
 
     def _really_load(self, f, filename, ignore_discard, ignore_expires):
         try:
             super()._really_load(f, filename, ignore_discard, ignore_expires)
-        except Exception as e:
-            with open(filename, "r") as fp:
-                for cookie in cookiejar_from_string(fp.read()):
-                    self.set_cookie(cookie)
+        except:
+            pass
+
+    def clear(self, domain=None, path=None, name=None):
+        for d in self.list_domains():
+            if not d.endswith(domain):
+                continue
+            super().clear(domain=d, path=path, name=name)
 
 
 class LeetCodeSession(requests.Session):
-    """ Multi-domain cookies persistable session so as to request
-        `leetcode.com` / `leetcode-cn.com` within ONE session
+    r"""
+    Multi-domain cookies persistable session so as to request
+    `leetcode.com` / `leetcode-cn.com` within ONE session
     """
 
     def __init__(self, filename: str = "", only_domain: str = ""):
@@ -518,19 +531,22 @@ class LeetCodeSession(requests.Session):
         self.cookies = RequestsCookieJar()
         self.logger = logging.getLogger("leetcode.requester.LeetCodeSession")
         self.headers.update({"User-Agent": USER_AGENT})
-        self.cookies.filename = filename if filename else config.COOKIES_FILE
-        self.load_cookies()
-
         if only_domain:
             self.accept_domains = {only_domain}
         else:
             self.accept_domains = {DOMAIN, DOMAIN_CN}
+
+        self.cookies.filename = filename if filename else config.COOKIES_FILE
+        if self.cookies.filename:
+            self.load_cookies()
 
         if DOMAIN in self.accept_domains and not self.is_signedin():
             self.logger.warning(
                 "Leetcode.com Not signed in, you may want to download a "
                 "cookies.txt with Chrome Extension cookies.txt"
             )
+            self.load_cookies_from_local_browser()
+            self.is_signedin()
 
         if DOMAIN_CN in self.accept_domains and not self.is_signedin_cn():
             self.logger.info(
@@ -538,14 +554,27 @@ class LeetCodeSession(requests.Session):
             )
             self.login_cn()
 
+    def load_cookies_from_local_browser(self):
+        """By browser_cookies3 """
+        for domain in self.accept_domains:
+            self.logger.info("Loading cookies from local browser for %s." % (domain,))
+            self.cookies.update(browser_cookie3.load(domain_name=domain))
+
     def load_cookies(self):
-        if not self.cookies.filename:
-            return
-        self.logger.info("Loading cookies: %s" % self.cookies.filename)
+        """
+        Load from cookies.txt first, if failed, try load from local browser,
+        Make sure your browser chrome/firefox is logged in.
+        """
+        self.logger.info("Loading cookies from: %s" % self.cookies.filename)
         try:
             self.cookies.load()
-        except FileNotFoundError:
-            self.logger.error("Cookies file not found: %s" % self.cookies.filename)
+        except FileNotFoundError as fnf:
+            self.logger.error("Load from %s failed: %s " % (self.cookies.filename, fnf))
+        except Exception as e:
+            self.logger.error("Load from %s failed: %s " % (self.cookies.filename, e))
+        finally:
+            if len(self.cookies) == 0:
+                self.load_cookies_from_local_browser()
 
     def save_cookies(self):
         if not self.cookies.filename:
@@ -560,18 +589,34 @@ class LeetCodeSession(requests.Session):
 
     def is_signedin(self):
         self.logger.info("Checking signed in Leetcode.com")
-        user_name = get_problem_stats_all(self).get("user_name")
+        try:
+            user_name = get_problem_stats_all(self).get("user_name")
+        except Exception as e:
+            self.logger.error("Checking signed in Leetcode.com: %s" % e)
+            return False
+
         signedin = user_name != ""
         if signedin:
             self.logger.info("Leetcode.com signedin successfully")
+            self.save_cookies()
+        else:
+            self.cookies.clear(domain=DOMAIN)
         return signedin
 
     def is_signedin_cn(self):
         self.logger.info("Checking signed in Leetcode-cn.com")
-        user_name = get_cn_problem_stats_all(self).get("user_name")
+        try:
+            user_name = get_cn_problem_stats_all(self).get("user_name")
+        except Exception as e:
+            self.logger.error("Checking signed in Leetcode-cn.com: %s" % e)
+            return False
+
         signedin = user_name != ""
         if signedin:
             self.logger.info("Leetcode-cn.com signedin successfully")
+            self.save_cookies()
+        else:
+            self.cookies.clear(domain=DOMAIN_CN)
         return signedin
 
     def login(self):
@@ -585,10 +630,11 @@ class LeetCodeSession(requests.Session):
             password
         ), "Update LEETCODE_USERNMAE_CN & LEETCODE_PASSWORD_CN in `config_private.py` before login_cn."
 
-        logged_in = login_cn(self, username, password)
-        if not logged_in:
-            raise NotAuthenticated(
-                "Failed to authenticate to leetcode-cn.com, check your username/password."
+        try:
+            logged_in = login_cn(self, username, password)
+        except Exception as e:
+            self.logger.error(
+                "Failed to login leetcode-cn.com, check your username/password."
             )
         else:
             self.logger.info("Leetcode-cn.com singned in successfully.")

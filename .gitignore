@@ -17,7 +17,7 @@
 # password maybe
 private_config.py
 config_private.py
-.DS_Store
+.DS_Store*
 *.pass
 .config
 logs/*

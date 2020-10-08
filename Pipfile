@@ -10,11 +10,13 @@ python-language-server = {extras = ["all"], version = "*"}
 
 [packages]
 pypandoc = "*"
-requests = "*"
+requests = {extras = ["all"], version = "*"}
 pymongo = "*"
 dateparser = "*"
 celery = "*"
 redis = "*"
+browser-cookie3 = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.8"

@@ -10,6 +10,8 @@ celery_app = celery.Celery("leetcode")
 class CeleryConfig(object):
     broker_url = "redis://127.0.0.1:6379/8"
     result_backend = "redis://127.0.0.1:6379/7"
+    task_ignore_result = False
+    # task_store_errors_even_if_ignored = True
     timezone = "Asia/Shanghai"
 
     # beat_schedule = {
