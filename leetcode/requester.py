@@ -347,14 +347,12 @@ def submit_cn_problem(
         "lang": lang,
         "typed_code": code,
         "test_mode": False,
-        "test_judger": "",
-        "questionSlug": slug,
     }
     headers = {
         "User-Agent": USER_AGENT,
         "Connection": "keep-alive",
-        "Referer": url,
-        "origin": "https://leetcode-cn.com/",
+        "Referer": f"https://{DOMAIN_CN}/problems/{slug}/submissions/",
+        "Origin": "https://leetcode-cn.com/",
         "Content-Type": "application/json",
         "X-CSRFToken": get_cookies_csrftoken(session, DOMAIN_CN),
     }
@@ -687,12 +685,13 @@ class LeetCodeSession(requests.Session):
             logged_in = login_cn(self, username, password)
         except Exception as e:
             self.logger.error(
-                "Failed to login leetcode-cn.com, check your username/password."
+                "Failed to login leetcode-cn.com, check your username/password. %s" % e
             )
         else:
             self.logger.info("Leetcode-cn.com singned in successfully: %s" % username)
             self.save_cookies()
-        return logged_in
+            return logged_in
+        return False
 
 
 def dictget(d, k):
@@ -712,7 +711,9 @@ def valid_data(data, name):
         "companyTag": lambda x: bool(dictget(x, "companyTag")),
         "topicTags": lambda x: bool(dictget(x, "questions")),
         "favorites": lambda x: bool(dictget(x, "questions")),
-        "problemContent": lambda x: bool(dictget(x, "content")),
+        "problemContent": lambda x: any(
+            [bool(dictget(x, "content")), bool(dictget(x, "translatedContent"))]
+        ),
         "allTags": lambda x: bool(dictget(x, "allTags")),
         "solutionArticleContent": lambda x: bool(dictget(x, "content")),
     }

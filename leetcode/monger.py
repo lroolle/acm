@@ -145,3 +145,13 @@ def update_cn_company_tags_all():
     )
     flow_cn.get()
     tqdm_flow(flow_cn, desc="CN CompanyTags")
+
+
+def update_all():
+    update_favorites_all()
+    update_tags_all()
+    update_problem_stats_all()
+    update_problems_all()
+    update_cn_company_tags_all()
+    update_cn_solution_tags_all()
+    update_cn_solution_articles_all()

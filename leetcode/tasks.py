@@ -1,5 +1,3 @@
-import logging
-
 import datetime
 import pymongo
 import requests
@@ -71,6 +69,38 @@ class LeetcodeCNSessionBaseTask(SessionBaseTask):
 
 
 # Leetcode & Leetcode-cn Request Problems Tasks
+@shared_task(bind=True, base=LeetcodeSessionBaseTask)
+def submit_problem_task(
+    self, slug: str, frontend_id: str, lang: str, code: str
+) -> dict:
+    submission_id = requester.submit_problem(
+        self.session, slug, frontend_id, lang, code
+    )
+    return submission_id
+
+
+@shared_task(bind=True, base=LeetcodeCNSessionBaseTask)
+def submit_cn_problem_task(
+    self, slug: str, frontend_id: str, lang: str, code: str
+) -> dict:
+    submission_id = requester.submit_cn_problem(
+        self.session, slug, frontend_id, lang, code
+    )
+    return submission_id
+
+
+@shared_task(bind=True, base=LeetcodeSessionBaseTask)
+def submission_check_task(self, submission_id: int) -> dict:
+    result = requester.submission_check(self.session, submission_id)
+    return result
+
+
+@shared_task(bind=True, base=LeetcodeCNSessionBaseTask)
+def submission_check_cn_task(self, submission_id: int) -> dict:
+    result = requester.submission_check_cn(self.session, submission_id)
+    return result
+
+
 @shared_task(bind=True, base=LeetcodeSessionBaseTask)
 def get_problem_favorites_all_task(self) -> dict:
     favorites = requester.get_problem_favorites_all(self.session)
@@ -188,6 +218,7 @@ def mongo_update_favorites_all_task(favorites, cn=False, collection_name="favori
 
     for favorite in favorites:
         if not requester.valid_data(favorite, "favorites"):
+            logger.warning("Invalid favorite data: %s" % favorite)
             continue
 
         q = {"id": favorite["id"]}
@@ -205,6 +236,7 @@ def mongo_update_tags_all_task(tags, cn=False, collection_name="topic_tags"):
     topic_tags = tags.get("topics", [])
     for tag in topic_tags:
         if not requester.valid_data(tag, "topicTags"):
+            logger.warning("Invalid tag data: %s" % tag)
             continue
 
         q = {"slug": tag["slug"]}
@@ -272,6 +304,14 @@ def mongo_update_problem_task(problem, stat, cn=False, collection_name="problems
     )
     if not requester.valid_data(problem, "problemContent"):
         # Premium only problems
+        logger.warning(
+            "Invalid problem data: %s.%s PaidOnly: %s"
+            % (
+                problem.get("questionFrontendId", None),
+                problem.get("titleSlug", None),
+                problem.get("isPaidOnly", False),
+            )
+        )
         return
 
     q = {"questionId": problem["questionId"]}
@@ -321,6 +361,7 @@ def mongo_update_cn_problem_solution_tag_task(
 
     if not requester.valid_data(tags_data, "allTags"):
         # Premium only problems
+        logger.warning("Invalid solution tag data: %s" % tags_data)
         return
 
     leetcodecn_update_or_insert_mongo_task.delay(
@@ -359,6 +400,7 @@ def mongo_update_cn_article_detail_task(
     }
 
     if not requester.valid_data(solution_article_data, "solutionArticleContent"):
+        logger.warning("Invalid article data: %s" % solution_article_data)
         return
 
     leetcodecn_update_or_insert_mongo_task.delay(
@@ -480,7 +522,7 @@ def mongo_update_cn_interview_company_tag(
     data = company_tag.get("data", {})
     # if valid
     if not requester.valid_data(data, "companyTag"):
-        logger.error("Invalid data for %s: %s" % (company_slug, data))
+        logger.warning("Invalid company tags data for %s: %s" % (company_slug, data))
         return
 
     data.update({"company_slug": company_slug})

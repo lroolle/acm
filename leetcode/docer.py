@@ -10,7 +10,6 @@ P.S Read code instead of edoc
 """
 
 import argparse
-import copy
 import json
 import logging
 import pathlib
@@ -259,7 +258,7 @@ def get_problem_content_display(problem: dict, cn: bool) -> str:
     hints = problem.get("hints", [])
     tags = problem.get("topicTags")
     similar_problems = json.loads(problem.get("similarQuestions", "[]"))
-    companies = json.loads(problem.get("companyTagStats", "{}"))
+    companies = json.loads(problem.get("companyTagStats", "{}") or "{}")
     content = problem.get("translatedContent") if cn else problem.get("content")
     if not content:
         return ""
@@ -288,7 +287,7 @@ def strip_blank_lines(content: str) -> str:
     return content
 
 
-def write_problem_org_readme(problem: dict, filepath: str) -> str:
+def write_problem_org_readme(problem: dict, problem_cn: dict, filepath: str) -> str:
     orgfile = pathlib.Path(filepath).resolve()
 
     if orgfile.exists():
@@ -297,7 +296,9 @@ def write_problem_org_readme(problem: dict, filepath: str) -> str:
         orgcontent = update_last_modified(orgcontent)
     else:
         content = get_problem_content_display(problem, False)
-        translated_content = get_problem_content_display(problem, True)
+        if not content:
+            content = get_problem_content_display(problem_cn, False)
+        translated_content = get_problem_content_display(problem_cn, True)
         data = {
             "create_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "last_modified": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -541,10 +542,13 @@ def get_problems_list_from_mongo() -> list:
 
 def get_problem_from_mongo(slug: str) -> dict:
     client = pymongo.MongoClient()
-    problem = client.leetcode_cn.problems.find_one(
+    problem = client.leetcode.problems.find_one(
         {"$or": [{"titleSlug": slug}, {"questionFrontendId": slug}]}
     )
-    return problem
+    problem_cn = client.leetcode_cn.problems.find_one(
+        {"$or": [{"titleSlug": slug}, {"questionFrontendId": slug}]}
+    )
+    return problem, problem_cn
 
 
 def get_problem_solutions_from_mongo(slug: str) -> list:
@@ -556,7 +560,7 @@ def get_problem_solutions_from_mongo(slug: str) -> list:
 
 
 # TODO: Do get from leetcode.com instead of mongo
-if __name__ == "__main__":
+def docer():
     basedir = get_leetcode_basedir()
     problems = get_problems_list_from_mongo()
     write_cn_problems_list_org_readme(
@@ -565,7 +569,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="For auto generate doc of question from leetcode-cn.com",
-        usage="python3 leetcode.py slug/id",
+        usage="python3 docer.py slug/id",
     )
     parser.add_argument(
         "slugs", type=str, nargs="+", help="Question slug to get",
@@ -574,25 +578,25 @@ if __name__ == "__main__":
 
     for slug in args.slugs:
         slug = slug.strip()
-        problem = get_problem_from_mongo(slug)
-        if not problem:
+        problem, problem_cn = get_problem_from_mongo(slug)
+        if not any([problem, problem_cn]):
             print("Not Found:", slug)
             continue
 
         basedir = get_leetcode_basedir()
         frontend_id = problem["questionFrontendId"]
         title_slug = problem["titleSlug"]
-        problem_dir = get_or_mk_question_dir(frontend_id, title_slug, basedir)
 
+        problem_dir = get_or_mk_question_dir(frontend_id, title_slug, basedir)
         # README.org
         orgreadme_path = problem_dir.joinpath("README.org")
         # TODO: separate -cn from leetcode
-        write_problem_org_readme(problem, orgreadme_path)
+        write_problem_org_readme(problem, problem_cn, orgreadme_path)
 
         # Personal solution file
         solution_file = write_solution_file(
             lang="go",
-            solution_code=generate_solution_code_golang(problem),
+            solution_code=generate_solution_code_golang(problem_cn),
             problem_dir=problem_dir,
         )
         generate_test_golang(solution_file)
