@@ -1,0 +1,15 @@
+{
+  "include": ["**"],
+
+  "exclude": ["**/node_modules", "**/__pycache__", "leetcode/example"],
+
+  "ignore": [".DS_Store.acm/"],
+  "venvPath": "/Users/eric/.local/share/virtualenvs/acm-ub4-lKkX/",
+  "typeCheckingMode": "off",
+
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+
+  "pythonVersion": "3.8",
+  "pythonPlatform": "Darwin"
+}

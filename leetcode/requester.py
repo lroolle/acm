@@ -650,7 +650,7 @@ class LeetCodeSession(requests.Session):
 
         signedin = user_name != ""
         if signedin:
-            self.logger.info("Leetcode.com signedin successfully")
+            self.logger.info("Leetcode.com signedin successfully: %s" % user_name)
             self.save_cookies()
         else:
             self.cookies.clear(domain=DOMAIN)
@@ -666,7 +666,7 @@ class LeetCodeSession(requests.Session):
 
         signedin = user_name != ""
         if signedin:
-            self.logger.info("Leetcode-cn.com signedin successfully")
+            self.logger.info("Leetcode-cn.com signedin successfully: %s" % user_name)
             self.save_cookies()
         else:
             self.cookies.clear(domain=DOMAIN_CN)
@@ -690,7 +690,7 @@ class LeetCodeSession(requests.Session):
                 "Failed to login leetcode-cn.com, check your username/password."
             )
         else:
-            self.logger.info("Leetcode-cn.com singned in successfully.")
+            self.logger.info("Leetcode-cn.com singned in successfully: %s" % username)
             self.save_cookies()
         return logged_in
 
@@ -698,7 +698,7 @@ class LeetCodeSession(requests.Session):
 def dictget(d, k):
     if k in d:
         return d[k]
-    for _k, _v in d.items():
+    for _, _v in d.items():
         if not isinstance(_v, dict):
             continue
 
@@ -710,5 +710,10 @@ def dictget(d, k):
 def valid_data(data, name):
     valid_fs = {
         "companyTag": lambda x: bool(dictget(x, "companyTag")),
+        "topicTags": lambda x: bool(dictget(x, "questions")),
+        "favorites": lambda x: bool(dictget(x, "questions")),
+        "problemContent": lambda x: bool(dictget(x, "content")),
+        "allTags": lambda x: bool(dictget(x, "allTags")),
+        "solutionArticleContent": lambda x: bool(dictget(x, "content")),
     }
     return valid_fs[name](data)

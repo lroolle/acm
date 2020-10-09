@@ -187,7 +187,10 @@ def mongo_update_favorites_all_task(favorites, cn=False, collection_name="favori
         mongo_task = leetcode_update_or_insert_mongo_task
 
     for favorite in favorites:
-        q = {"name": favorite["name"]}
+        if not requester.valid_data(favorite, "favorites"):
+            continue
+
+        q = {"id": favorite["id"]}
         favorite.update({"update_time": datetime.datetime.now()})
         mongo_task.delay(collection_name=collection_name, q=q, **favorite)
 
@@ -201,6 +204,9 @@ def mongo_update_tags_all_task(tags, cn=False, collection_name="topic_tags"):
 
     topic_tags = tags.get("topics", [])
     for tag in topic_tags:
+        if not requester.valid_data(tag, "topicTags"):
+            continue
+
         q = {"slug": tag["slug"]}
         tag.update({"update_time": datetime.datetime.now()})
         mongo_task.delay(collection_name=collection_name, q=q, **tag)
@@ -233,11 +239,15 @@ def mongo_update_problem_stats_all_task(
             "difficulty_level": stat_item["difficulty"]["level"],
             "paid_only": stat_item["paid_only"],
             "is_favor": stat_item["is_favor"],
-            "frequency": stat_item["frequency"],
             "progress": stat_item["progress"],
             "ac_rate": stat["total_acs"] / stat["total_submitted"],
             **stat,
         }
+
+        # Only update if frequency avaiable(Premium only)
+        frequency = stat_item["frequency"]
+        if frequency:
+            stat_data.update(frequency=frequency)
 
         mongo_task.delay(collection_name=collection_name, q=q, **stat_data)
 
@@ -260,6 +270,10 @@ def mongo_update_problem_task(problem, stat, cn=False, collection_name="problems
             "stat": stat,
         }
     )
+    if not requester.valid_data(problem, "problemContent"):
+        # Premium only problems
+        return
+
     q = {"questionId": problem["questionId"]}
     mongo_task.delay(collection_name=collection_name, q=q, **problem)
 
@@ -280,7 +294,6 @@ def mongo_update_problems_all_task(stats, cn=False, collection_name="problems"):
 
     problem_stats_pairs = stats.get("stat_status_pairs", [])
     for stat_item in problem_stats_pairs:
-        stat = stat_item["stat"]
         title_slug = stat_item["stat"]["question__title_slug"]
         problems_all_workflow(
             get_problem_task, title_slug, stat_item, cn, collection_name
@@ -305,6 +318,11 @@ def mongo_update_cn_problem_solution_tag_task(
         }
     )
     q = {"question_id": tags_data["question_id"]}
+
+    if not requester.valid_data(tags_data, "allTags"):
+        # Premium only problems
+        return
+
     leetcodecn_update_or_insert_mongo_task.delay(
         collection_name=collection_name, q=q, **tags_data
     )
@@ -339,6 +357,10 @@ def mongo_update_cn_article_detail_task(
         "question_id": solution_article_data["question_id"],
         "uuid": solution_article_data["uuid"],
     }
+
+    if not requester.valid_data(solution_article_data, "solutionArticleContent"):
+        return
+
     leetcodecn_update_or_insert_mongo_task.delay(
         collection_name=solution_collection, q=q, **solution_article_data
     )

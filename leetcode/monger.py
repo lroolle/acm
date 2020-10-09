@@ -1,16 +1,9 @@
 """ A stupid async data preservation process to mongoDB"""
 
-import datetime
 import logging
-import random
-import threading
-import time
-
-import requests
 
 import pymongo
 from celery import chord
-from leetcode import requester as fetcher
 from leetcode import tasks
 from tqdm import tqdm
 
@@ -41,18 +34,16 @@ def update_favorites_all():
         | tasks.mongo_update_favorites_all_task.s(cn=False)
     )()
     flow.get()
-    for result in tqdm(flow.children, total=len(flow.children)):
-        result.get()
+    tqdm_flow(flow, desc="   Favorites")
 
     # Leetcode-cn.com
     logger.debug("Starting leetcode-cn update_favorites_all_task")
-    flow = (
+    flow_cn = (
         tasks.get_cn_problem_favorites_all_task.s()
         | tasks.mongo_update_favorites_all_task.s(cn=True)
     )()
-    flow.get()
-    for result in tqdm(flow.children, total=len(flow.children)):
-        result.get()
+    flow_cn.get()
+    tqdm_flow(flow_cn, desc="CN Favorites")
 
 
 def update_tags_all():
@@ -63,18 +54,16 @@ def update_tags_all():
         | tasks.mongo_update_tags_all_task.s(cn=False)
     )()
     flow.get()
-    for result in tqdm(flow.children, total=len(flow.children)):
-        result.get()
+    tqdm_flow(flow, desc="   Tags")
 
     # Leetcode-cn.com
     logger.debug("Starting leetcode-cn update_tags_all_task")
-    flow = (
+    flow_cn = (
         tasks.get_cn_problem_tags_all_task.s()
         | tasks.mongo_update_tags_all_task.s(cn=True)
     )()
-    flow.get()
-    for result in tqdm(flow.children, total=len(flow.children)):
-        result.get()
+    flow_cn.get()
+    tqdm_flow(flow_cn, desc="CN Tags")
 
 
 def update_problem_stats_all():
@@ -85,8 +74,7 @@ def update_problem_stats_all():
         | tasks.mongo_update_problem_stats_all_task.s(cn=False)
     )()
     flow.get()
-    for result in tqdm(flow.children, total=len(flow.children)):
-        result.get()
+    tqdm_flow(flow, desc="   Stats")
 
     # Leetcode-cn.com
     logger.debug("Starting leetcode-cn update_problem_stats_all_task")
@@ -95,8 +83,7 @@ def update_problem_stats_all():
         | tasks.mongo_update_problem_stats_all_task.s(cn=True)
     )()
     flow_cn.get()
-    for result in tqdm(flow_cn.children, total=len(flow_cn.children)):
-        result.get()
+    tqdm_flow(flow_cn, desc="CN Stats")
 
 
 def update_problems_all():
@@ -111,7 +98,7 @@ def update_problems_all():
     # BUG: Protocol error, redis connection share thread?
     # thread = threading.Thread(target=tqdm_flow, args=(flow, "Leetcode"))
     # thread.start()
-    tqdm_flow(flow, "Leetcode Problems All")
+    tqdm_flow(flow, "   Problems")
 
     # Leetcode-cn.com
     logger.debug("Starting leetcode-cn update_problem_all_task")
@@ -120,7 +107,7 @@ def update_problems_all():
         | tasks.mongo_update_problems_all_task.s(cn=True)
     )()
     flow_cn.get()
-    tqdm_flow(flow, desc="LeetcodeCN Problems All")
+    tqdm_flow(flow_cn, desc="CN Problems")
 
 
 def update_cn_solution_tags_all():
@@ -131,7 +118,7 @@ def update_cn_solution_tags_all():
         | tasks.mongo_update_problems_all_task.s(cn=True)
     )()
     flow_cn.get()
-    tqdm_flow(flow_cn, desc="LeetcodeCN Solution Tags")
+    tqdm_flow(flow_cn, desc="CN SolutionTags")
 
 
 def update_cn_solution_articles_all(limit=10):
@@ -144,7 +131,7 @@ def update_cn_solution_articles_all(limit=10):
     # This may just displays get_solution_list process of each problem
     # But no get solution detail process due to async works...
     flow_cn.get()
-    tqdm_flow(flow_cn, desc="LeetcodeCN Solutions All")
+    tqdm_flow(flow_cn, desc="CN Solutions")
 
 
 def update_cn_company_tags_all():
@@ -157,4 +144,4 @@ def update_cn_company_tags_all():
         | tasks.mongo_update_cn_interview_company_tags_all.s()
     )
     flow_cn.get()
-    tqdm_flow(flow_cn, desc="LeetcodeCN CompanyTags All")
+    tqdm_flow(flow_cn, desc="CN CompanyTags")
