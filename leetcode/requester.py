@@ -258,6 +258,59 @@ def get_cn_solution_detail_article(session: requests.Session, slug: str) -> dict
     return resp.json()
 
 
+def get_cn_interview_hotcards(session: requests.Session) -> dict:
+    """ 企业题库(Vip Maybe Required)"""
+    payload = {
+        "operationName": "interviewHotCards",
+        "variables": {},
+        "query": "query interviewHotCards {\n  interviewHotCards {\n    id\n    acRate\n    order\n    isFavorite\n    isPremiumOnly\n    numParticipants\n    numQuestionsAced\n    numQuestions\n    privilegeExpiresAt\n    company {\n      name\n      slug\n      imgUrl\n      __typename\n    }\n    jobsCompany {\n      name\n      jobPostingNum\n      isVerified\n      __typename\n    }\n    __typename\n  }\n}\n",
+    }
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Referer": f"https://{DOMAIN_CN}/problems/interview/",
+        "X-CSRFToken": get_cookies_csrftoken(session, DOMAIN_CN),
+    }
+    resp = session.post(GRAPHQL_CN, data=json.dumps(payload), headers=headers)
+    return resp.json()
+
+
+def get_cn_interview_hotsearchcards(session: requests.Session) -> dict:
+    """ 企业题库-热搜企业(Vip Maybe Required)"""
+    payload = {
+        "operationName": "interviewHotSearchCards",
+        "variables": {"num": 100},
+        "query": "query interviewHotSearchCards($num: Int) {\n  interviewHotSearchHistory(num: $num) {\n    company {\n      name\n      slug\n      imgUrl\n      __typename\n    }\n    __typename\n  }\n}\n",
+    }
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Referer": f"https://{DOMAIN_CN}/problems/interview/",
+        "X-CSRFToken": get_cookies_csrftoken(session, DOMAIN_CN),
+    }
+    resp = session.post(GRAPHQL_CN, data=json.dumps(payload), headers=headers)
+    return resp.json()
+
+
+def get_cn_interview_company_tags(session: requests.Session, slug: str) -> dict:
+    payload = {
+        "operationName": "companyTag",
+        "variables": {"slug": slug},
+        "query": "query companyTag($slug: String!) {\n  interviewCard(companySlug: $slug) {\n    id\n    isFavorite\n    isPremiumOnly\n    privilegeExpiresAt\n    jobsCompany {\n      name\n      jobPostingNum\n      isVerified\n      description\n      logo\n      logoPath\n      postingTypeCounts {\n        count\n        postingType\n        __typename\n      }\n      industryDisplay\n      scaleDisplay\n      financingStageDisplay\n      website\n      legalName\n      __typename\n    }\n    __typename\n  }\n  interviewCompanyOptions(query: $slug) {\n    id\n    __typename\n  }\n  companyTag(slug: $slug) {\n    name\n    id\n    imgUrl\n    translatedName\n    frequencies\n    questions {\n      title\n      translatedTitle\n      titleSlug\n      questionId\n      stats\n      status\n      questionFrontendId\n      difficulty\n      frequencyTimePeriod\n      topicTags {\n        id\n        name\n        slug\n        translatedName\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  jobsCompany(companySlug: $slug) {\n    name\n    legalName\n    logo\n    description\n    website\n    industryDisplay\n    scaleDisplay\n    financingStageDisplay\n    isVerified\n    __typename\n  }\n}\n",
+    }
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Connection": "keep-alive",
+        "Content-Type": "application/json",
+        "Referer": f"https://{DOMAIN_CN}/problems/interview/",
+        "X-CSRFToken": get_cookies_csrftoken(session, DOMAIN_CN),
+    }
+    resp = session.post(GRAPHQL_CN, data=json.dumps(payload), headers=headers)
+    return resp.json()
+
+
 @login_required(f".{DOMAIN}")
 def submit_problem(
     session: requests.Session, slug: str, frontend_id: str, lang: str, code: str
@@ -623,9 +676,9 @@ class LeetCodeSession(requests.Session):
         """ TODO: Try login leetcode.com after fucking recaptcha"""
         return False
 
-    def login_cn(self):
-        username = config.LEETCODE_USERNMAE_CN
-        password = config.LEETCODE_PASSWORD_CN
+    def login_cn(self, username="", password=""):
+        username = username or config.LEETCODE_USERNMAE_CN
+        password = password or config.LEETCODE_PASSWORD_CN
         assert bool(username) and bool(
             password
         ), "Update LEETCODE_USERNMAE_CN & LEETCODE_PASSWORD_CN in `config_private.py` before login_cn."
@@ -640,3 +693,22 @@ class LeetCodeSession(requests.Session):
             self.logger.info("Leetcode-cn.com singned in successfully.")
             self.save_cookies()
         return logged_in
+
+
+def dictget(d, k):
+    if k in d:
+        return d[k]
+    for _k, _v in d.items():
+        if not isinstance(_v, dict):
+            continue
+
+        item = dictget(_v, k)
+        if bool(item):
+            return item
+
+
+def valid_data(data, name):
+    valid_fs = {
+        "companyTag": lambda x: bool(dictget(x, "companyTag")),
+    }
+    return valid_fs[name](data)
