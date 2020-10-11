@@ -1,5 +1,4 @@
 # Init logging config
-# TODO: mkdir(logs) or handlers may config failed
 
 try:
     from . import config_private as config

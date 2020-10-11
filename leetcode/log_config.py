@@ -1,4 +1,10 @@
+import os
 from logging.config import dictConfig
+
+# Make sure log dir exists
+if not os.path.exists("logs"):
+    os.mkdir("logs")
+
 
 LOGGING = {
     "version": 1,

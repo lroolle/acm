@@ -1,5 +1,5 @@
 [[source]]
-name = "pypi"
+name = "doubanio"
 url = "https://pypi.doubanio.com/simple"
 verify_ssl = true
 
