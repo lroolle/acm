@@ -131,6 +131,10 @@ def update_cn_solution_articles_all(limit=10):
     # This may just displays get_solution_list process of each problem
     # But no get solution detail process due to async works...
     flow_cn.get()
+    logger.warning(
+        "This process only displays solution list of each problem, "
+        "Which means there are still article detail tasks running background..."
+    )
     tqdm_flow(flow_cn, desc="CN Solutions")
 
 

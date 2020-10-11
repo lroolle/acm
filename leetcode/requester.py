@@ -2,8 +2,6 @@ import http
 import itertools
 import json
 import logging
-import pathlib
-import pickle
 from functools import wraps
 from typing import List
 
@@ -511,6 +509,7 @@ def login_cn(session: requests.Session, username: str = "", password: str = "") 
     }
     payload = {"login": username, "password": password}
     session.post(login_url, headers=headers, data=payload, allow_redirects=False)
+    print(session.cookies)
     return bool(session.cookies.get("LEETCODE_SESSION", domain=f".{DOMAIN_CN}"))
 
 
@@ -566,7 +565,7 @@ class RequestsCookieJar(
 
     def clear(self, domain=None, path=None, name=None):
         for d in self.list_domains():
-            if not d.endswith(domain):
+            if domain and not d.endswith(domain):
                 continue
             super().clear(domain=d, path=path, name=name)
 
@@ -657,7 +656,7 @@ class LeetCodeSession(requests.Session):
     def is_signedin_cn(self):
         self.logger.info("Checking signed in Leetcode-cn.com")
         try:
-            user_name = get_cn_problem_stats_all(self).get("user_name")
+            user_name = get_cn_problem_stats_all(self).get("user_name") or ""
         except Exception as e:
             self.logger.error("Checking signed in Leetcode-cn.com: %s" % e)
             return False
@@ -684,12 +683,17 @@ class LeetCodeSession(requests.Session):
         try:
             logged_in = login_cn(self, username, password)
         except Exception as e:
-            self.logger.error(
-                "Failed to login leetcode-cn.com, check your username/password. %s" % e
-            )
+            self.logger.error("Failed to login leetcode-cn.com, errors: %s" % e)
         else:
-            self.logger.info("Leetcode-cn.com singned in successfully: %s" % username)
-            self.save_cookies()
+            if logged_in:
+                self.logger.info(
+                    "Leetcode-cn.com singned in successfully: %s" % username
+                )
+                self.save_cookies()
+            else:
+                self.logger.error(
+                    "Failed to login leetcode-cn.com, check your username/password."
+                )
             return logged_in
         return False
 

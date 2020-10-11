@@ -265,6 +265,7 @@ def mongo_update_problem_stats_all_task(
     for stat_item in problem_stats_pairs:
         stat = stat_item["stat"]
         q = {"question_id": stat["question_id"]}
+        total_submitted = stat["total_submitted"] or 1
         stat_data = {
             "update_time": update_time,
             "status": stat_item["status"],
@@ -272,7 +273,7 @@ def mongo_update_problem_stats_all_task(
             "paid_only": stat_item["paid_only"],
             "is_favor": stat_item["is_favor"],
             "progress": stat_item["progress"],
-            "ac_rate": stat["total_acs"] / stat["total_submitted"],
+            "ac_rate": stat["total_acs"] / total_submitted,
             **stat,
         }
 
