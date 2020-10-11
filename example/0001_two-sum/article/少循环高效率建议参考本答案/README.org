@@ -1,0 +1,46 @@
+#+TITLE: 【少循环，高效率】建议参考本答案
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-shao-xun-huan-gao-xiao-lu-jian-yi-can-kao-ben-da-a
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Python Python3
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/shao-xun-huan-gao-xiao-lu-jian-yi-can-kao-ben-da-a/][【少循环，高效率】建议参考本答案]] :Python:Python3:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/shao-xun-huan-gao-xiao-lu-jian-yi-can-kao-ben-da-a/][【少循环，高效率】建议参考本答案]] solution by [[https://leetcode-cn.com/u/ke-yan-xiao-bai-10/][ke-yan-xiao-bai-10]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+- 为了防止在pop()之后无法找到第一个元素的索引，此处使用浅拷贝
+- 第一个元素的索引在原数组中查找
+- 第二个元素的索引使用计数法进行标记
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_EXAMPLE
+  class Solution:
+      def twoSum(self, nums: List[int], target: int) -> List[int]:
+          num = nums.copy()
+          n = 0
+          while len(num):
+              i = num.pop(0)
+              n += 1
+              if target-i in num:
+                  return [nums.index(i),num.index(target-i)+n]
+#+END_EXAMPLE

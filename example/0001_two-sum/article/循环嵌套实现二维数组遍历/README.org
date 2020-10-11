@@ -1,0 +1,47 @@
+#+TITLE: 循环嵌套实现二维数组遍历
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-xun-huan-qian-tao-shi-xian-er-wei-shu-zu-bian-li-b
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Java
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/xun-huan-qian-tao-shi-xian-er-wei-shu-zu-bian-li-b/][循环嵌套实现二维数组遍历]] :Java:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/xun-huan-qian-tao-shi-xian-er-wei-shu-zu-bian-li-b/][循环嵌套实现二维数组遍历]] solution by [[https://leetcode-cn.com/u/er-shi-di/][er-shi-di]]
+#+end_quote
+
+循环嵌套实现二维数组遍历
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_SRC java
+  class Solution {
+      public int[] twoSum(int[] nums, int target) {
+  int[] aa={0,0};
+
+          for (int i = 0; i < nums.length; i++) {
+              for (int j = 1; j < nums.length; j++) {
+                  if (nums[i] + nums[j] == target&& i!=j) {
+                     aa = new int[] {i, j};
+                      System.out.println(aa[0] + "," + aa[1]);
+                  }
+              }
+
+          }
+          return aa;
+
+      }
+  }
+#+END_SRC

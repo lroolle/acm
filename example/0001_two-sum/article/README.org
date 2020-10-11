@@ -1,0 +1,24 @@
+#+TITLE: …
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum--by-feng-zhi-yu-yan
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/-by-feng-zhi-yu-yan/][…]]
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/-by-feng-zhi-yu-yan/][…]] solution by [[https://leetcode-cn.com/u/feng-zhi-yu-yan/][feng-zhi-yu-yan]]
+#+end_quote
+
+#+BEGIN_EXAMPLE
+  代码块
+#+END_EXAMPLE

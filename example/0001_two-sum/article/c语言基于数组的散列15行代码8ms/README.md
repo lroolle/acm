@@ -1,0 +1,84 @@
+"+++
+title = "0001. Two Sum C语言基于数组的散列（15行代码，8ms） "
+author = ["jyding"]
+date = 2020-03-31T06:55:45+08:00
+tags = ["Leetcode", "Algorithms", "C", "Array", "哈希"]
+categories = ["leetcode"]
+draft = false
++++
+
+# C语言基于数组的散列（15行代码，8ms）
+
+> [0001. Two Sum](https://leetcode-cn.com/problems/two-sum/)
+> [C语言基于数组的散列（15行代码，8ms）](https://leetcode-cn.com/problems/two-sum/solution/cyu-yan-ji-yu-shu-zu-de-san-lie-15xing-dai-ma-8ms-/) by [jyding](https://leetcode-cn.com/u/jyding/)
+
+一、暴力法，执行结果下图：
+![Screenshot from 2020-03-31 14-34-01.png](https://pic.leetcode-cn.com/c63434eaa63686ec2d5468d080054855d8aad9d391bf06284de55a5599850e51-Screenshot%20from%202020-03-31%2014-34-01.png)
+```c
+int *twoSum(int *nums, int numsSize, int target, int *returnSize)
+{
+    int *result = (int *)malloc(sizeof(int) * 2);
+    for (int i = 0; i < numsSize - 1; i++)
+    {
+        for (int j = i + 1; j < numsSize; j++)
+        {
+            if (nums[i] + nums[j] == target)
+            {
+                result[0] = i;
+                result[1] = j;
+                *returnSize = 2;
+                return result;
+            }
+        }
+    }
+    return result;
+}
+```
+二、数组散列法
+先看执行结果： （30倍！！！）
+![Screenshot from 2020-03-31 14-34-33.png](https://pic.leetcode-cn.com/e7ff40206b590c2187d1584811041dc1f133fe622ff7bb8ddd28134a8e7cd180-Screenshot%20from%202020-03-31%2014-34-33.png)
+
+没必要使用C语言实现hash操作，直接使用数组进行散列， 即将 nums 中的元素值当下标，nums的下标当值存储在 hash 数组中 ： `hash[ nums[i] ] = i;`
+1. 首先初始化 hash[2000], 初始值设为 -1 ，
+2. 遍历数组， 查看 target - nums[i] 为下标 的 hash 数组元素值 (`hash[ target - nums[i] ]`) 是否为 - 1;
+3. 若为 -1 ，将 下标 i 存放在 hash数组的 nums[i] 位置上， `hash[ nums[i] ] = i;` 
+4. 若不为 -1 ，即存在 相加为 target 的元素，两个元素的下标为 `hash[ target - nums[i]]` , `i`;
+
+> 注意： 测试用例中存在负数，在散列时会访问越界，故使用求余法，将负数散列到数组尾部 : `hash[(nums[i] + MAX_SIZE) % MAX_SIZE] = i;` 查找时也要如此；
+> 就是负数放到后面
+
+希望图能看懂
+
+![hash.png](https://pic.leetcode-cn.com/79db6316c713702f1af6fc6197b64846d437e135dffdea7d3a675355b3147ac1-hash.png)
+
+```c
+//hash 散列
+#define MAX_SIZE 2048
+int *twoSum(int *nums, int numsSize, int target, int *returnSize)
+{
+    int i, hash[MAX_SIZE], *res = (int *)malloc(sizeof(int) * 2);
+    memset(hash, -1, sizeof(hash));
+    for (i = 0; i < numsSize; i++)
+    {
+        if (hash[(target - nums[i] + MAX_SIZE) % MAX_SIZE] != -1)
+        {
+            res[0] = hash[(target - nums[i] + MAX_SIZE) % MAX_SIZE];
+            res[1] = i;
+            *returnSize = 2;
+            return res;
+        }
+        hash[(nums[i] + MAX_SIZE) % MAX_SIZE] = i;  //防止负数下标越界，循环散列
+    }
+    free(hash);
+    *returnSize = 0;
+    return res;
+}
+```
+
+> 说明一下：这种方法局限性在数组长度和散列函数上，容易导致hash散列冲突；
+> 我所知道的就是：
+> 1.构造更好的散列函数，但冲突不可避免,
+> 2.使用开放定址法或拉链法处理冲突;
+> 但就我做这题时官方测试用例而言，这种方法能够通过。所以具体问题咱们具体分析。
+
+>本人算法小白，欢迎指教

@@ -1,0 +1,35 @@
+#+TITLE: python 简单高效
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-python-jian-dan-gao-xiao-by-gua-niu-uk
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Python3
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/python-jian-dan-gao-xiao-by-gua-niu-uk/][python 简单高效]] :Python3:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/python-jian-dan-gao-xiao-by-gua-niu-uk/][python 简单高效]] solution by [[https://leetcode-cn.com/u/gua-niu-uk/][gua-niu-uk]]
+#+end_quote
+
+#+BEGIN_EXAMPLE
+  nums = [2,7,11,10]
+  target = 9
+  temp = []
+  def sum_two_nums(goal):
+      for item in range(len(nums)-1):
+          for i in range(item + 1, len(nums)-item):
+              if nums[item] + nums[i] == goal:
+                  temp.append(item)
+                  temp.append(i)
+      return temp
+  result = sum_two_nums(target)
+  print(result)
+#+END_EXAMPLE

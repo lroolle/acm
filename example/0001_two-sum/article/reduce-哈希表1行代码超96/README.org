@@ -1,0 +1,54 @@
+#+TITLE: Reduce + 哈希表（1行代码，超96%）
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-reduce1xing-dai-ma-chao-96-by-mantoufan
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms JavaScript HashTable
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/reduce1xing-dai-ma-chao-96-by-mantoufan/][Reduce + 哈希表（1行代码，超96%）]] :JavaScript:HashTable:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/reduce1xing-dai-ma-chao-96-by-mantoufan/][Reduce + 哈希表（1行代码，超96%）]] solution by [[https://leetcode-cn.com/u/mantoufan/][mantoufan]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+- =p=：最后一位下标 以及 和为=target=的所需=值=下标
+- =reduce=：
+
+  - =p[v]=找到，=ar.splice(1)=，提前终止=reduce=循环，返回 [=p=存的下标,
+    当前下标]
+  - =p[v]=未找到
+
+    - 最后一位，返回=[]=
+    - 不是最后一位，存下标，=p[target - v] = i=
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_EXAMPLE
+  var twoSum = function(nums, target) {
+      return nums.reduce((p, v, i, ar) => p[v] !== undefined && ar.splice(1) && [p[v], i] || (i === p['l'] ? [] : p[target - v] = i, p), {l: nums.length - 1})
+  };
+#+END_EXAMPLE
+
+** 结果
+    :PROPERTIES:
+    :CUSTOM_ID: 结果
+    :END:
+
+#+CAPTION: QQ拼音截图20201003114911.png
+[[https://pic.leetcode-cn.com/1601697572-JGbWeA-QQ%E6%8B%BC%E9%9F%B3%E6%88%AA%E5%9B%BE20201003114911.png]]

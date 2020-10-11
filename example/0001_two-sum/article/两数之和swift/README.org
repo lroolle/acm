@@ -1,0 +1,43 @@
+#+TITLE: 两数之和Swift
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-liang-shu-zhi-he-swift-by-da-dong-14
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Swift
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-swift-by-da-dong-14/][两数之和Swift]] :Swift:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-swift-by-da-dong-14/][两数之和Swift]] solution by [[https://leetcode-cn.com/u/da-dong-14/][da-dong-14]]
+#+end_quote
+
+#+BEGIN_EXAMPLE
+  class Solution {
+      func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+          var dic:[Int:Int] = [:]
+          for i in 0..<nums.count {
+              var a = nums[i]
+              // 从字典中查找，找到了直接返回
+              if let bIndex = dic[target - a] {                
+                  return [bIndex,i]
+              } else {
+                  // 存储到字典中【值：下标】
+                  dic[a] = i
+              }
+          }
+          // 没找到返回默认值
+          return []
+      }
+  }
+#+END_EXAMPLE
+
+#+CAPTION: 20201002001556.jpg
+[[https://pic.leetcode-cn.com/1601569152-ZLGPvp-20201002001556.jpg]]

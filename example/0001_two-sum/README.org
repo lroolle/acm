@@ -1,0 +1,119 @@
+#+TITLE: 0001. Two Sum
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Array HashTable
+
+* [[https://leetcode.com/problems/two-sum/][0001. Two Sum]]
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+Easy U:17299 D:620 AC:45.9% F:0
+#+end_quote
+
+Given an array of integers =nums= and an integer =target=, return
+/indices of the two numbers such that they add up to =target=/.
+
+You may assume that each input would have */exactly/ one solution*, and
+you may not use the /same/ element twice.
+
+You can return the answer in any order.
+
+ 
+
+*Example 1:*
+
+#+BEGIN_EXAMPLE
+  Input: nums = [2,7,11,15], target = 9
+  Output: [0,1]
+  Output: Because nums[0] + nums[1] == 9, we return [0, 1].
+#+END_EXAMPLE
+
+*Example 2:*
+
+#+BEGIN_EXAMPLE
+  Input: nums = [3,2,4], target = 6
+  Output: [1,2]
+#+END_EXAMPLE
+
+*Example 3:*
+
+#+BEGIN_EXAMPLE
+  Input: nums = [3,3], target = 6
+  Output: [0,1]
+#+END_EXAMPLE
+
+ 
+
+*Constraints:*
+
+- =2 <= nums.length <= 105=
+- =-109 <= nums[i] <= 109=
+- =-109 <= target <= 109=
+- *Only one valid answer exists.*
+** Hints
+1. A really brute force way would be to search for all possible pairs of numbers but that would be too slow. Again, it's best to try out brute force solutions for just for completeness. It is from these brute force solutions that you can come up with optimizations.
+2. So, if we fix one of the numbers, say <pre>x</pre>, we have to scan the entire array to find the next number <pre>y</pre> which is <pre>value - x</pre> where value is the input parameter. Can we change our array somehow so that this search becomes faster?
+3. The second train of thought is, without changing the array, can we use additional space somehow? Like maybe a hash map to speed up the search?
+** Topic Tags
+1. [[https://leetcode.com/tag/array/][Array]]
+2. [[https://leetcode.com/tag/hash-table/][Hash Table]]
+
+** Similar Problems
+*** [[https://leetcode.com/problems/3sum/][0015. 3Sum]]
+*** [[https://leetcode.com/problems/4sum/][0018. 4Sum]]
+*** [[https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/][0167. Two Sum II - Input array is sorted]]
+*** [[https://leetcode.com/problems/two-sum-iii-data-structure-design/][0170. Two Sum III - Data structure design]]
+*** [[https://leetcode.com/problems/subarray-sum-equals-k/][0560. Subarray Sum Equals K]]
+*** [[https://leetcode.com/problems/two-sum-iv-input-is-a-bst/][0653. Two Sum IV - Input is a BST]]
+*** [[https://leetcode.com/problems/two-sum-less-than-k/][1099. Two Sum Less Than K]]
+
+* [[https://leetcode-cn.com/problems/two-sum/][0001. 两数之和]]
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_quote
+Easy U:9330 D:0 AC:49.7% F:0
+#+end_quote
+
+给定一个整数数组 =nums= 和一个目标值
+=target=，请你在该数组中找出和为目标值的那 *两个* 整数，并返回他们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素不能使用两遍。
+
+ 
+
+*示例:*
+
+#+BEGIN_EXAMPLE
+  给定 nums = [2, 7, 11, 15], target = 9
+
+  因为 nums[0] + nums[1] = 2 + 7 = 9
+  所以返回 [0, 1]
+#+END_EXAMPLE
+** Hints
+1. A really brute force way would be to search for all possible pairs of numbers but that would be too slow. Again, it's best to try out brute force solutions for just for completeness. It is from these brute force solutions that you can come up with optimizations.
+2. So, if we fix one of the numbers, say <pre>x</pre>, we have to scan the entire array to find the next number <pre>y</pre> which is <pre>value - x</pre> where value is the input parameter. Can we change our array somehow so that this search becomes faster?
+3. The second train of thought is, without changing the array, can we use additional space somehow? Like maybe a hash map to speed up the search?
+** Topic Tags
+1. [[https://leetcode-cn.com/tag/array/][数组]]
+2. [[https://leetcode-cn.com/tag/hash-table/][哈希表]]
+
+** Similar Problems
+*** [[https://leetcode-cn.com/problems/3sum/][0015. 三数之和]]
+*** [[https://leetcode-cn.com/problems/4sum/][0018. 四数之和]]
+*** [[https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/][0167. 两数之和 II - 输入有序数组]]
+*** [[https://leetcode-cn.com/problems/two-sum-iii-data-structure-design/][0170. 两数之和 III - 数据结构设计]]
+*** [[https://leetcode-cn.com/problems/subarray-sum-equals-k/][0560. 和为K的子数组]]
+*** [[https://leetcode-cn.com/problems/two-sum-iv-input-is-a-bst/][0653. 两数之和 IV - 输入 BST]]
+*** [[https://leetcode-cn.com/problems/two-sum-less-than-k/][1099. 小于 K 的两数之和]]
+

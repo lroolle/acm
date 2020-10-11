@@ -1,0 +1,44 @@
+#+TITLE: [JLU每日一题]C++ 
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-jlumei-ri-yi-ti-c-by-hdlugjqzc5
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms cpp
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/jlumei-ri-yi-ti-c-by-hdlugjqzc5/][[JLU每日一题]C++ ]] :cpp:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/jlumei-ri-yi-ti-c-by-hdlugjqzc5/][[JLU每日一题]C++ ]] solution by [[https://leetcode-cn.com/u/HdlugJqzc5/][HdlugJqzc5]]
+#+end_quote
+
+* 解题思路
+  :PROPERTIES:
+  :CUSTOM_ID: 解题思路
+  :END:
+
+技巧:通过哈希表确定元素是否存在,一次遍历 # 代码
+
+#+BEGIN_EXAMPLE
+      vector<int> twoSum(vector<int>& nums, int target) {
+          map<int, int> nMap;
+          vector<int> ans;
+          int length = nums.size();
+          for (int i = 0; i < length; ++i) {
+              if (nMap.count(target - nums[i])) {
+                  ans.push_back(nMap[target - nums[i]]);
+                  ans.push_back(i);
+                  return ans;
+              }
+              nMap[nums[i]] = i;
+          }
+          return ans;
+      }
+#+END_EXAMPLE

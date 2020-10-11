@@ -1,0 +1,49 @@
+#+TITLE: 就这？
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-jiu-zhe-by-lun-1
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Python
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/jiu-zhe-by-lun-1/][就这？]] :Python:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/jiu-zhe-by-lun-1/][就这？]] solution by [[https://leetcode-cn.com/u/lun-1/][lun-1]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+过一遍，如果存在目标值就返回，不存在就存到字典里
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_SRC python
+  class Solution(object):
+      def twoSum(self, nums, target):
+          """
+          :type nums: List[int]
+          :type target: int
+          :rtype: List[int]
+          """
+          target_dict = {}
+          for i, num in enumerate(nums):
+              target_num = target - num
+              if target_num in target_dict:
+                  return [target_dict[target_num], i]
+              else:
+                  target_dict[num] = i
+#+END_SRC

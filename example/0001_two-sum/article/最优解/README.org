@@ -1,0 +1,22 @@
+#+TITLE: 最优解
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-zui-you-jie-by-mirst
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms cpp
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/zui-you-jie-by-mirst/][最优解]] :cpp:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/zui-you-jie-by-mirst/][最优解]] solution by [[https://leetcode-cn.com/u/mirst/][mirst]]
+#+end_quote
+
+最优解

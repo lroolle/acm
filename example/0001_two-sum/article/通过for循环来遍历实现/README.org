@@ -1,0 +1,46 @@
+#+TITLE: 通过for循环来遍历实现
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-tong-guo-forxun-huan-lai-bian-li-shi-xian-by-may-c
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms JavaScript
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/tong-guo-forxun-huan-lai-bian-li-shi-xian-by-may-c/][通过for循环来遍历实现]] :JavaScript:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/tong-guo-forxun-huan-lai-bian-li-shi-xian-by-may-c/][通过for循环来遍历实现]] solution by [[https://leetcode-cn.com/u/may-c/][may-c]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+此处撰写解题思路 通过两层for循环来依次匹配数据 ### 代码
+
+#+BEGIN_EXAMPLE
+  /**
+   * @param {number[]} nums
+   * @param {number} target
+   * @return {number[]}
+   */
+  var twoSum = function (nums, target) {
+    const _arr = [];
+    for (let i = 0; i < nums.length; i++) {
+      for (let j = i + 1; j < nums.length; j++) {
+        if (nums[i] + nums[j] === target) {
+          _arr.push(i, j);
+        }
+      }
+    }
+    return _arr;
+  };
+#+END_EXAMPLE

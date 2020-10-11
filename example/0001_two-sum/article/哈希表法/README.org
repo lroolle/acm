@@ -1,0 +1,52 @@
+#+TITLE: 哈希表法
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-ha-xi-biao-fa-by-lanshiqin-2
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Java
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/ha-xi-biao-fa-by-lanshiqin-2/][哈希表法]] :Java:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/ha-xi-biao-fa-by-lanshiqin-2/][哈希表法]] solution by [[https://leetcode-cn.com/u/lanshiqin/][lanshiqin]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+1. 定义一个哈希表，用来存储循环的每个元素，nums数组值作为key，nums数组下标作为value。
+2. 每次循环判时，断哈希表中是否有key等于 target -
+   nums[i],如果有就返回下标。没有则继续保存key value。
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_SRC java
+  class Solution {
+      public int[] twoSum(int[] nums, int target) {
+          Map<Integer,Integer> map = new HashMap<>(nums.length);
+          for(int i=0; i< nums.length; i++){
+              int x = nums[i];
+              int key = target - x;
+              if (!map.containsKey(key)){
+                  map.put(x,i);
+                  continue;
+              }
+              return new int[]{map.get(key),i};
+          }
+          return new int[0];
+      }
+  }
+#+END_SRC

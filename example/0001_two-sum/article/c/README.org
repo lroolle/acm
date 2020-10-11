@@ -1,0 +1,25 @@
+#+TITLE: C#
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-c-by-licodecheng-die-yi
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/c-by-licodecheng-die-yi/][C#]]
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/c-by-licodecheng-die-yi/][C#]] solution by [[https://leetcode-cn.com/u/licodecheng-die-yi/][licodecheng-die-yi]]
+#+end_quote
+
+static void Main(string[] args) { int[] nums = new int[] { 7, 15, 2, 11
+}; int target = 9; for (int i = 0; i < nums.Length-1; i++) { for (int j
+= i+1; j < nums.Length; j++) { if (nums[i]+nums[j] == target) {
+Console.WriteLine($"下标为：{i}和{j}"); } } } }

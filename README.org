@@ -9,9 +9,7 @@
 #+HUGO_CATEGORIES: notes
 #+HUGO_TAGS: notes
 
-* ACM: AC Manager
-1. Leetcode Manager
-2. Questions Manage
-3. Solution Manger
-4. Leecode 中文社区
+* Leetcode
 
+1. Leetcode.com
+2. Leetcode-cn.com

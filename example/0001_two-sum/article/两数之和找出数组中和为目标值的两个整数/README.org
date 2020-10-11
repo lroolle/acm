@@ -1,0 +1,46 @@
+#+TITLE: 两数之和：找出数组中和为目标值的两个整数
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-liang-shu-zhi-he-zhao-chu-shu-zu-zhong-he-wei-mu-b
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Python3 Python
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-zhao-chu-shu-zu-zhong-he-wei-mu-b/][两数之和：找出数组中和为目标值的两个整数]] :Python3:Python:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-zhao-chu-shu-zu-zhong-he-wei-mu-b/][两数之和：找出数组中和为目标值的两个整数]] solution by [[https://leetcode-cn.com/u/jue-qiang-zha-zha/][jue-qiang-zha-zha]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+1. 建立哈希表（字典），存储数组各元素及其对应的下标。{hashmap[num]:i,
+   ...}
+2. 遍历数组。设当前元素坐标为i，值为num，用字典的get方法返回（target-num）的坐标j。如果坐标j不为None且与i不同，则返回两个数的坐标位置。
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_EXAMPLE
+  class Solution:
+      def twoSum(self, nums: List[int], target: int) -> List[int]:
+          hashmap = {}
+          for i, num in enumerate(nums):
+              hashmap[num] = i
+          for i, num in enumerate(nums):
+              j = hashmap.get(target-num)
+              if j != None and j != i:
+                  return [i,j]
+#+END_EXAMPLE

@@ -1,0 +1,91 @@
+#+TITLE: c++ 三种方法 -z
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-c-san-chong-fang-fa-jian-dan-yi-dong-ji-bai-100-z-
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms C++
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/c-san-chong-fang-fa-jian-dan-yi-dong-ji-bai-100-z-/][c++ 三种方法 -z]] :C++:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/c-san-chong-fang-fa-jian-dan-yi-dong-ji-bai-100-z-/][c++ 三种方法 -z]] solution by [[https://leetcode-cn.com/u/zrita/][zrita]]
+#+end_quote
+
+ps:对于存在重复元素的情况，用一遍哈希和两遍哈希确实会得到不同的结果，但是都是符合题目要求的。
+题目描述确实有点含糊，但是这个题目的本意是让我们练习哈希表，题目说到You
+may assume that each input would have exactly one
+solution，即您可以假设每个输入都只有一个解决方案。
+
+** 两遍哈希
+    :PROPERTIES:
+    :CUSTOM_ID: 两遍哈希
+    :END:
+
+#+BEGIN_SRC C++
+  class Solution {
+  public:
+      vector<int> twoSum(vector<int>& nums, int target) {
+          unordered_map<int,int> m;
+          for(int i = 0; i<nums.size(); i++)
+              m[nums[i]] = i;         //向map中添加元素        
+          for(int i = 0; i<nums.size(); i++)
+          {
+              if(m.find(target-nums[i]) != m.end() && m[target-nums[i]] != i)  //如果m中存在对应的键值，且不为i
+                  return {i, m[target-nums[i]]};
+          }
+          return {};
+      }
+  };
+#+END_SRC
+
+** 一遍哈希
+    :PROPERTIES:
+    :CUSTOM_ID: 一遍哈希
+    :END:
+
+#+BEGIN_SRC C++
+  class Solution {
+  public:
+      vector<int> twoSum(vector<int>& nums, int target) {
+          unordered_map<int,int> m;        
+          for(int i = 0; i < nums.size(); i++)
+          {
+              if(m.find(target-nums[i]) != m.end())     return {m[target-nums[i]], i};        
+                                  //  m[target-nums[i]]为已经加入map的元素的索引，所以小于本轮循环中的i，放在前面
+              m[nums[i]] = i;       //向map中添加元素
+          }
+          return {};
+      }
+  };
+#+END_SRC
+
+** 暴力解法
+    :PROPERTIES:
+    :CUSTOM_ID: 暴力解法
+    :END:
+
+#+BEGIN_SRC C++
+  class Solution {
+  public:
+      vector<int> twoSum(vector<int>& nums, int target) {
+          int len = nums.size();
+
+          for(int i = 0; i < len-1; i++)
+          for(int j = i + 1; j < len; j++)
+          {
+              if(nums[i] + nums[j] == target)
+              return {i,j};
+          }
+          
+         return {};
+      }
+  };
+#+END_SRC

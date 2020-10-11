@@ -1,0 +1,238 @@
+"+++
+title = "0001. Two Sum 三种方法（暴力、双指针、哈希），三种语言实现（c++，python,java） "
+author = ["yun-yu-chen"]
+date = 2020-06-21T13:16:02+08:00
+tags = ["Leetcode", "Algorithms", "C++", "Java", "Python3", "Python", "Map", "TwoPointers"]
+categories = ["leetcode"]
+draft = false
++++
+
+# 三种方法（暴力、双指针、哈希），三种语言实现（c++，python,java）
+
+> [0001. Two Sum](https://leetcode-cn.com/problems/two-sum/)
+> [三种方法（暴力、双指针、哈希），三种语言实现（c++，python,java）](https://leetcode-cn.com/problems/two-sum/solution/san-chong-fang-fa-bao-li-shuang-zhi-zhen-ha-xi-san/) by [yun-yu-chen](https://leetcode-cn.com/u/yun-yu-chen/)
+
+这里学习的主要是方法，之所以再用python、java实现，是因为我最近在学习这两门语言，希望在此基础是得到巩固。
+
+C++
+1.暴力
+暴力算法时间复杂度O（n²），空间复杂度O（1）
+
+
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<int> ans;
+        for(int i=0;i<nums.size();i++){
+              for(int j=i+1;j<nums.size();j++){
+                  if(nums[i]+nums[j]==target){
+                      ans.push_back(i);
+                      ans.push_back(j);
+                      return ans;
+                  }
+              }
+        }
+        return ans;
+    }
+};
+```
+
+
+2.排序+双指针法
+这里先将数组排序好O（nlogn），再利用双指针法遍历一遍O（n）得到结果。
+为了保存下标信息另开了一个数组
+时间复杂度O（nlogn），空间复杂度O（n）
+
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<int> ans;
+        vector<int> temp;
+        temp=nums;
+        int n=temp.size();
+       sort(temp.begin(),temp.end());
+       int i=0,j=n-1;
+       while(i<j){  
+           if(temp[i]+temp[j]>target)j--;
+          else if(temp[i]+temp[j]<target)i++;
+          else break; 
+       }
+       if(i<j){
+      for(int k=0;k<n;k++){
+          if(i<n&&nums[k]==temp[i]){
+              ans.push_back(k);
+              i=n;
+          }
+         else if(j<n&&nums[k]==temp[j]){
+              ans.push_back(k);
+              j=n;
+          }
+          if(i==n&&j==n)return ans;
+      }
+      }
+        return ans;
+    }
+};
+```
+
+3.hash法
+利用undered_map数组构造映射，遍历nums[i]时，看target-nums[i]是否存在hash表中即可
+时间复杂度O（n），空间复杂度O（n）
+
+```
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<int> ans;
+       unordered_map<int,int>hashmap;
+       for(int i=0;i<nums.size();i++){
+           if(hashmap[target-nums[i]]
+          &&hashmap[target-nums[i]]!=i+1){
+          //防止利用同个元素
+               ans.push_back(i);
+               ans.push_back(hashmap[target-nums[i]]-1);
+               return ans;
+           }
+        hashmap[nums[i]]=i+1;
+        //将hash表对应下标＋1，防止处理下标为0的情况
+       }
+      
+       return ans;
+    }
+};
+```
+
+总结：
+实际在提交过程中，方法2,3差距不太，1最慢。
+
+
+
+Python
+暴力
+
+
+```
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        for i in range(len(nums)):
+            for j in range(i+1,len(nums)):
+                if nums[i]+nums[j]==target:
+                    return [i,j]
+        return []
+```
+
+排序＋双指针
+
+
+```
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        temp=nums.copy()
+        temp.sort()
+        i=0
+        j=len(nums)-1
+        while i<j:
+            if (temp[i]+temp[j])>target:
+                j=j-1
+            elif (temp[i]+temp[j])<target:
+                i=i+1
+            else:
+                break
+        p=nums.index(temp[i])
+        nums.pop(p)
+        k=nums.index(temp[j])
+        if k>=p:
+            k=k+1
+        return [p,k]
+```
+
+hash
+
+```
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        hashset={}
+        for i in range(len(nums)):
+            if hashset.get(target-nums[i]) is not None :
+                return [hashset.get(target-nums[i]),i]
+            hashset[nums[i]]=i
+```
+
+
+java
+暴力
+
+```
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int[] ans=new int[2];
+        for(int i=0;i<nums.length;i++){
+              for(int j=i+1;j<nums.length;j++){
+                  if(nums[i]+nums[j]==target){
+                      ans[0]=i;
+                      ans[1]=j;
+                    return ans;
+                  }
+              }      
+    }
+    return ans;
+    }
+}
+```
+
+排序+双指针
+
+
+```
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int m=0,n=0,k,board=0;
+        int[] res=new int[2];
+        int[] tmp1=new int[nums.length];
+        System.arraycopy(nums,0,tmp1,0,nums.length);
+        Arrays.sort(nums);
+        for(int i=0,j=nums.length-1;i<j;){
+            if(nums[i]+nums[j]<target)
+                i++;
+            else if(nums[i]+nums[j]>target)
+                j--;
+            else if(nums[i]+nums[j]==target){
+                m=i;
+                n=j;
+                break;
+            }
+        }
+        for(k=0;k<nums.length;k++){
+            if(tmp1[k]==nums[m]){
+                res[0]=k;
+                break;
+            }
+        }
+        for(int i=0;i<nums.length;i++){
+            if(tmp1[i]==nums[n]&&i!=k)
+                res[1]=i;
+        }
+        return res;
+    }
+}
+```
+
+
+hash
+
+
+```
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i< nums.length; i++) {
+            if(map.containsKey(target - nums[i])) {
+                return new int[] {map.get(target-nums[i]),i};
+            }
+            map.put(nums[i], i);
+        }
+       return new int[] {-1,-1};
+    }}
+```

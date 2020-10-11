@@ -1,0 +1,50 @@
+#+TITLE: 两数之和，最简单方法
+#+DATE: 2020-10-11 13:38
+#+LAST_MODIFIED: 2020-10-11 13:38
+#+STARTUP: overview
+#+HUGO_WEIGHT: auto
+#+HUGO_AUTO_SET_LASTMOD: t
+#+EXPORT_FILE_NAME: 0001-two-sum-liang-shu-zhi-he-zui-jian-dan-fang-fa-by-qing-shu-
+#+HUGO_BASE_DIR:~/G/blog
+#+HUGO_SECTION: leetcode
+#+HUGO_CATEGORIES:leetcode
+#+HUGO_TAGS: Leetcode Algorithms Java
+
+* [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-zui-jian-dan-fang-fa-by-qing-shu-/][两数之和，最简单方法]] :Java:
+:PROPERTIES:
+:VISIBILITY: children
+:END:
+
+#+begin_quote
+[[https://leetcode-cn.com/problems/two-sum/][0001. Two Sum]] [[https://leetcode-cn.com/problems/two-sum/solution/liang-shu-zhi-he-zui-jian-dan-fang-fa-by-qing-shu-/][两数之和，最简单方法]] solution by [[https://leetcode-cn.com/u/qing-shu-k/][qing-shu-k]]
+#+end_quote
+
+** 解题思路
+    :PROPERTIES:
+    :CUSTOM_ID: 解题思路
+    :END:
+
+此处撰写解题思路
+
+** 代码
+    :PROPERTIES:
+    :CUSTOM_ID: 代码
+    :END:
+
+#+BEGIN_SRC java
+  class Solution {
+      public int[] twoSum(int[] nums, int target) {
+            int[] jieguo=new int[2];//定义一个空白的，含有2个位置的数组
+            for(int i=0;i<nums.length;i++){
+                for(int j=i+1;j<nums.length;j++){
+                    if(nums[j]==target-nums[i]){
+                       jieguo[0]=i;
+                       jieguo[1]=j;
+                       return jieguo;
+                    }
+                }            
+            }
+            return jieguo;
+      }
+  }
+#+END_SRC

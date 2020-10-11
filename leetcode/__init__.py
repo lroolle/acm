@@ -10,4 +10,4 @@ except ImportError:
 from . import log_config
 from . import celery
 
-__all__ = ["celery.celery_app"]
+__all__ = ["celery.celery_app", "log_config", "config"]
